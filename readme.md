@@ -218,7 +218,7 @@ $ kubectl create clusterrolebinding promethe-exporter-rolebinding --role=system:
 
 ```
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-$ helm install prometheus-adapter prometheus-community/prometheus-adapter --namespace=monitoring
+$ helm install prometheus-adapter prometheus-community/prometheus-adapter --namespace=monitoring -f adapter-values.yaml
 NAME: prometheus-adapter
 LAST DEPLOYED: Tue Jun 27 14:01:03 2023
 NAMESPACE: monitoring
@@ -238,12 +238,16 @@ In a few minutes you should be able to list metrics using the following command(
 kubectl create rolebinding -n kube-system prometheus-adapter-rolebinding --role=extension-apiserver-authentication-reader --serviceaccount=monitoring:prometheus-adapter
 ```
 
+安装成功后，可通过如下命令获取自定义的指标信息。
+
 ```
 $ kubectl get --raw "/apis/custom.metrics.k8s.io/v1beta1/namespaces/monitoring/pods/%2A/transform_task_queue_size"
 {"kind":"MetricValueList","apiVersion":"custom.metrics.k8s.io/v1beta1","metadata":{},"items":[{"describedObject":{"kind":"Pod","namespace":"monitoring","name":"transform-exporter-858866d559-nsnjp","apiVersion":"/v1"},"metricName":"transform_task_queue_size","timestamp":"2023-06-27T08:04:36Z","value":"31","selector":null}]}
 ```
 
 ## 创建 HPA
+
+执行 `example/worker` 目录下的 `service.yaml` 创建 `Deployment` 和 `HPA` 。
 
 ```
 $ kubectl get hpa -n monitoring
