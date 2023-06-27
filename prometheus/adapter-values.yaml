@@ -1,0 +1,13 @@
+rules:
+  default: false
+  custom:
+  - seriesQuery: 'transform_task_queue_size'
+    resources:
+      template: <<.Resource>>
+    name:
+      matches: "transform_task_queue_size"
+      as: "transform_task_queue_size" # PromQL 计算出来的 QPS 指标
+    metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
+prometheus:
+  url: http://prometheus-operated.monitoring.svc.cluster.local # 替换 Prometheus API 的地址 (不写端口)
+  port: 9090u

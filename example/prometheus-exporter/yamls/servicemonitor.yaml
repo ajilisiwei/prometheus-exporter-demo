@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transform-exporter
+  labels:
+    k8s-app: transform-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      k8s-app: transform-exporter
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - monitoring
+  endpoints:
+  - interval: 30s
+    port: web
+    path: /metrics

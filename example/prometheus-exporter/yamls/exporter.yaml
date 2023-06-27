@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transform-exporter
+  namespace: monitoring
+  labels:
+    k8s-app: transform-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: transform-exporter
+  template:
+    metadata:
+      labels:
+        k8s-app: transform-exporter
+    spec:
+      containers:
+        - name: transform-exporter
+          image: 748172492803.dkr.ecr.cn-northwest-1.amazonaws.com.cn/transform-task-exporter
+          env:
+            - name: WEB_API
+              value: https://beta.laihua.com/api/user/video/getQeuenLen?queueName=transform_100
+          ports:
+            - name: web
+              containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transform-exporter
+  namespace: monitoring
+  labels:
+    k8s-app: transform-exporter
+spec:
+  selector:
+    k8s-app: transform-exporter
+  ports:
+    - name: web
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
